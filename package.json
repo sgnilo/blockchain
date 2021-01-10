@@ -1,0 +1,22 @@
+{
+  "name": "blockchain",
+  "version": "1.0.0",
+  "description": "数字版权验证系统的区块链模块",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sgnilo/blockchain.git"
+  },
+  "keywords": [
+    "blockchain"
+  ],
+  "author": "xujiangping",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sgnilo/blockchain/issues"
+  },
+  "homepage": "https://github.com/sgnilo/blockchain#readme"
+}
