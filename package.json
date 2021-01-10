@@ -4,7 +4,8 @@
   "description": "数字版权验证系统的区块链模块",
   "main": "src/index.js",
   "scripts": {
-    "test": "npm run test"
+    "test": "npm run test",
+    "start": "node src/index.js"
   },
   "repository": {
     "type": "git",
@@ -18,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/sgnilo/blockchain/issues"
   },
-  "homepage": "https://github.com/sgnilo/blockchain#readme"
+  "homepage": "https://github.com/sgnilo/blockchain#readme",
+  "dependencies": {
+    "sha1": "^1.1.1"
+  }
 }
