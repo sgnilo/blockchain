@@ -1,8 +1,13 @@
-const config = require('./config.json');
-const sha = require("sha1");
+import config from './config.js';
+import sha1 from 'sha1';
 
-console.log(config)
+const sha = sha1;
 
+/**
+ * 生成区块
+ * @param {object} infoList 要记录的列表
+ * @param {object} preBlock 上一区块
+ */
 const createBlock = (infoList, preBlock = {height: 0}) => {
     const body = createBlockBody(infoList);
     const option = {
@@ -17,19 +22,10 @@ const createBlock = (infoList, preBlock = {height: 0}) => {
     }
 };
 
-const mock = [
-    {id: 1},
-    {id: 2},
-    {id: 3},
-    {id: 4},
-    {id: 5},
-    {id: 6},
-    {id: 7},
-    {id: 8},
-    {id: 9},
-]
-
-// 创建merkle树
+/**
+ * 生成merkle树
+ * @param {object} infoList 要记录的列表
+ */
 const createMerkleTree = infoList => {
     let level = 0;
     const iterator = list => {
@@ -69,6 +65,10 @@ const createBlockBody = infoList => {
     }
 }
 
+/**
+ * 生成区块头
+ * @param {object}} option 配置项，包含前一区块头hash值以及merkle树根节点
+ */
 const createBlockHead = (option) => {
     const head = {
         version: config.version || 1,
@@ -80,15 +80,25 @@ const createBlockHead = (option) => {
     return head;
 }
 
+/**
+ * 根据难度生成随机数
+ * @param {Object} node 区块头
+ * @param {number} num 生成的随机数
+ */
 const getRandomNum = (node, num) => {
     const hashStr = sha(JSON.stringify({...node, randNum: num}));
     return hashStr.startsWith(config.hardLevel) ? num : getRandomNum(node, num + 1);
 }
 
-const res = createBlock(mock);
+/**
+ * 验证该区块是否符合规则以及可否纳入区块链
+ * @param {object} block 进行验证的区块
+ */
+const verifyBlock = block => sha(JSON.stringify(block.head)).startsWith(config.hardLevel);
 
-console.log(res);
 
-// export default {
 
-// }
+export default {
+    makeBlock: createBlock,
+    verifyBlock
+}
