@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/sgnilo/blockchain#readme",
   "dependencies": {
-    "sha1": "^1.1.1"
+    "sha1": "^1.1.1",
+    "webpack": "^5.23.0",
+    "webpack-cli": "^4.5.0"
   }
 }
