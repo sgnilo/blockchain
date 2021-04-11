@@ -37,7 +37,32 @@ const writeFile = chain => {
     }
     const chains = [...getFileContent(EXACTFILENAME), chain];
     fs.writeFileSync(EXACTFILENAME, JSON.stringify(chains));
-}
+};
 
+const syncChainFile = chunk => {
+  const {fileName, fileContent} = JSON.parse(chunk);
+  fs.writeFileSync(path.resolve(__dirname, fileName), JSON.stringify(fileContent));
+  if (fileName !== 'chain.json') {
+    chainConfig.fullFileList.push(fileName);
+    fs.writeFileSync(CONFIGFILENAME, JSON.stringify(chainConfig));
+  }
+};
 
-export default writeFile;
+const getFullFileList = () => {
+  const {fullFileList} = chainConfig;
+  return fullFileList;
+};
+
+const getFileContentWithFileName = fileName => {
+  return {
+    fileName,
+    fileContent: getFileContent(fileName)
+  };
+};
+
+module.exports = {
+  writeFile,
+  syncChainFile,
+  getFullFileList,
+  getFileContentWithFileName
+};
