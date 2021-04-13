@@ -5,6 +5,7 @@ const checkLoop = require('./checkloop');
 const client = require('./client');
 const event = require('../util/event');
 const config = require('./net-config');
+const cache = require('./cache');
 
 class NetWork {
     constructor(server, client) {
@@ -19,7 +20,8 @@ class NetWork {
 
     initServer() {
         this.server.initNetWork(config.runPort).then(data => {
-            console.log('网络监听器初始化完成！', data)
+            console.log('网络监听器初始化完成！');
+            cache.setCache('thisAddress', data);
             event.fire('join', data);
         }).catch(err => console.error(err));
     }
@@ -27,21 +29,21 @@ class NetWork {
     joinNet(data) {
         const {ip: thisIp, port: thisPort} = data;
         this.client.findAndJoinNet(thisIp, thisPort).then(() => {
-            console.log('加入区块链网络完成')
+            console.log('加入区块链网络完成');
             event.fire('sync');
         });
     }
 
     syncData() {
         this.client.syncBlockChain().then(() => {
-            console.log('区块链数据同步完成')
+            console.log('区块链数据同步完成');
             event.fire('setting');
         });
     }
 
     setTask() {
         checkLoop.check(config.checkLoopDuration);
-        console.log('巡检任务设置完成')
+        console.log('巡检任务设置完成');
     }
 }
 

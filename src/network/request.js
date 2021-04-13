@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const util = require('../util/request');
 const net = require('net');
+const cache = require('./cache');
 
 const toPoint = (ip, port, data) => {
     return new Promise((resolve, reject) => {
@@ -25,20 +26,24 @@ const toAll = (data, defaultIpList) => {
     const ipList = defaultIpList || getIpList();
     return Promise.allSettled(ipList.map(item => {
         const [ip, port] = item.split('-');
-        return new Promise((resolve, reject) => {
-            try {
-                if (!net.isIP(ip)) {
-                    throw new Error('无效IP!');
+        const myAddress = cache.getCache('thisAddress');
+        if (ip !== myAddress.ip && port !== myAddress.port) {
+            return new Promise((resolve, reject) => {
+                try {
+                    if (!net.isIP(ip)) {
+                        throw new Error('无效IP!');
+                    }
+                    util.request(ip, parseInt(port, 10), data, res => {
+                        resolve(res);
+                    }, err => {
+                        reject(err);
+                    });
+                } catch (e) {
+                    reject(e);
                 }
-                util.request(ip, parseInt(port, 10), data, res => {
-                    resolve(res);
-                }, err => {
-                    reject(err);
-                });
-            } catch (e) {
-                reject(e);
-            }
-        });
+            });
+        }
+        return Promise.reject();
     }));
 };
 

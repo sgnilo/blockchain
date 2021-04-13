@@ -25,6 +25,7 @@ const findAndJoinNet = (myIP, myPORT) => {
 
 const getNearestServer = data => {
     return request.toAll(`3|${JSON.stringify(data)}`).then(result => {
+        console.log(result);
         const validIpList = result.filter(everyReq => !!everyReq.value).map(item => item.value);
         return request.toAllWithRace(`3|`, validIpList);
     });

@@ -5,6 +5,7 @@ const demand = require('./demand');
 
 const joinBlockChainNetwork = (context, data) => {
     const [ip, port] = data.split('-');
+    syncIpList(context, data);
     request.toAll(`1|${ip}-${port}`).catch(err => {});
     const list = request.getIpList();
     context.write(JSON.stringify(list));
@@ -23,6 +24,7 @@ const stillAlive = (context, data) => {
 
 const getNearestIp = (context, data) => {
     const {type, value} = JSON.parse(data || '{}');
+    console.log('debug: i am here')
     if (demand.verify(type, value)) {
         const {port, address} = context.address();
         context.write(JSON.stringify({port, ip: address}));
