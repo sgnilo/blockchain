@@ -1,10 +1,10 @@
 // 每个区块链系统本身既是客户端，也是服务端，此文件为服务端请求方法
 const request = require('./request');
 const chainOperate = require('../data/chainOperate');
+const demand = require('./demand');
 
 const joinBlockChainNetwork = (context, data) => {
     const [ip, port] = data.split('-');
-    syncIpList(context, data);
     request.toAll(`1|${ip}-${port}`).catch(err => {});
     const list = request.getIpList();
     context.write(JSON.stringify(list));
@@ -22,8 +22,11 @@ const stillAlive = (context, data) => {
 };
 
 const getNearestIp = (context, data) => {
-    const {port, address} = context.address();
-    context.write(JSON.stringify({port, ip: address}));
+    const {type, value} = JSON.parse(data || '{}');
+    if (demand.verify(type, value)) {
+        const {port, address} = context.address();
+        context.write(JSON.stringify({port, ip: address}));
+    }
 };
 
 const transferChain = (context, data) => {

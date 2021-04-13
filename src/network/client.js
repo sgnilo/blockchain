@@ -6,7 +6,7 @@ const chainOperate = require('../data/chainOperate');
 const findAndJoinNet = (myIP, myPORT) => {
     const [ip, port] = config.proxyIP.split('-');
     if (ip != myIP || port != myPORT) {
-        request.toPoint(ip, port, `0|${myIP}-${myPORT}`).then(res => {
+        return request.toPoint(ip, port, `0|${myIP}-${myPORT}`).then(res => {
             const list = JSON.parse(res);
             request.updateIpList(list);
             console.log('加入成功！');
@@ -15,6 +15,7 @@ const findAndJoinNet = (myIP, myPORT) => {
             console.error(e);
         });
     }
+    return Promise.resolve();
 };
 
 // const askSomeThing = (ip, port, signal, data) => {
@@ -22,20 +23,31 @@ const findAndJoinNet = (myIP, myPORT) => {
 //     return request.toPoint(ip, port, `3|${JSON.stringify(info)}`);
 // };
 
-const syncBlockChain = (allNode = false) => {
-    request.toAllWithRace(`3|`).then(res => {
+const getNearestServer = data => {
+    return request.toAll(`3|${JSON.stringify(data)}`).then(result => {
+        const validIpList = result.filter(everyReq => !!everyReq.value).map(item => item.value);
+        return request.toAllWithRace(`3|`, validIpList);
+    });
+};
+
+const syncBlockChain = (chainType = 'head') => {
+    const params = {
+        name: 'chainType',
+        value: chainType
+    };
+    return getNearestServer(params).then(res => {
         const {ip, port} = JSON.parse(res);
         const params = {
             ip,
             port,
-            dataString: `4|${allNode ? 1 : 0}`,
             onData: chunk => chainOperate.syncChainFile(chunk)
         };
-        request.download(params);
+        return request.download(params);
     });
 };
 
 module.exports = {
     findAndJoinNet,
-    syncBlockChain
+    syncBlockChain,
+    getNearestServer
 };

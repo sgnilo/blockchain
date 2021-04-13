@@ -21,8 +21,8 @@ const toPoint = (ip, port, data) => {
     });
 };
 
-const toAll = data => {
-    const ipList = getIpList();
+const toAll = (data, defaultIpList) => {
+    const ipList = defaultIpList || getIpList();
     return Promise.allSettled(ipList.map(item => {
         const [ip, port] = item.split('-');
         return new Promise((resolve, reject) => {
@@ -42,8 +42,8 @@ const toAll = data => {
     }));
 };
 
-const toAllWithRace = data => {
-    const ipList = getIpList();
+const toAllWithRace = (data, defaultIpList) => {
+    const ipList = defaultIpList || getIpList();
     return Promise.race(ipList.map(item => {
         const [ip, port] = item.split('-');
         return new Promise((resolve, reject) => {
@@ -76,7 +76,7 @@ const updateIpList = ipAddr => {
 const download = option => {
     return new Promise((resolve, reject) => {
         try {
-            const {ip, callBack, errCallBack} = option;
+            const {ip} = option;
             if (!net.isIP(ip)) {
                 throw new Error('无效IP!');
             }
