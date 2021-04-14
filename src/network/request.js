@@ -27,23 +27,23 @@ const toAll = (data, defaultIpList) => {
     return Promise.allSettled(ipList.map(item => {
         const [ip, port] = item.split('-');
         const myAddress = cache.getCache('thisAddress');
-        if (ip !== myAddress.ip && port !== myAddress.port) {
-            return new Promise((resolve, reject) => {
-                try {
-                    if (!net.isIP(ip)) {
-                        throw new Error('无效IP!');
-                    }
-                    util.request(ip, parseInt(port, 10), data, res => {
-                        resolve(res);
-                    }, err => {
-                        reject(err);
-                    });
-                } catch (e) {
-                    reject(e);
-                }
-            });
+        if (item === `${myAddress.ip}-${myAddress.port}`) {
+            return Promise.reject();
         }
-        return Promise.reject();
+        return new Promise((resolve, reject) => {
+            try {
+                if (!net.isIP(ip)) {
+                    throw new Error('无效IP!');
+                }
+                util.request(ip, parseInt(port, 10), data, res => {
+                    resolve(res);
+                }, err => {
+                    reject(err);
+                });
+            } catch (e) {
+                reject(e);
+            }
+        });
     }));
 };
 
