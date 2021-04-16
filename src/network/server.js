@@ -2,6 +2,7 @@
 const request = require('./request');
 const chainOperate = require('../data/chainOperate');
 const demand = require('./demand');
+const net = require('net');
 
 const joinBlockChainNetwork = (context, data) => {
     const [ip, port] = data.split('-');
@@ -24,21 +25,56 @@ const stillAlive = (context, data) => {
 
 const getNearestIp = (context, data) => {
     const {type, value} = JSON.parse(data || '{}');
-    console.log('debug: i am here')
-    if (demand.verify(type, value)) {
+    console.log('debug: i am here', type, value, demand.verify(type, value))
+    if (demand.verify(type, value) || !data) {
         const {port, address} = context.address();
+        console.log(context.address());
+        console.log('是否合法：', net.isIP(address));
         context.write(JSON.stringify({port, ip: address}));
     }
 };
 
-const transferChain = (context, data) => {
-    const fileList = chainOperate.getFullFileList();
-    fileList.forEach(file => {
-        const fileInfo = chainOperate.getFileContentWithFileName(fileInfo);
-        context.write(JSON.parse(fileInfo));
+const writeFile = (context, data, size = 1000) => {
+    const {fileName, fileContent} = data;
+    
+    const contentBufferList = [];
+    let index = 0;
+    while (index < fileContent.length) {
+        const tempContent = fileContent.slice(index, index + size);
+        const contentBuffer = Buffer.alloc(tempContent.length, tempContent);
+        contentBufferList.push(contentBuffer);
+        index += size;
+    }
+    contentBufferList.forEach(buffer => {
+        context.write(buffer);
     });
-    const activeFileInfo = chainOperate.getFileContentWithFileName('chain.json');
-    context.write(JSON.stringify(activeFileInfo));
+    // const nameBuffer = Buffer.alloc(fileName.length, fileName);
+    // console.log(contentBufferList);
+    // console.log(nameBuffer);
+    // context.write(nameBuffer);
+};
+
+const writeInfo = (context, fileList) => {
+    fileList.map((file, index) => {
+        let padding = `${file.name}|${file.contentLength}|${index + 1 < fileList.length ? 1 : 0}`;
+        while (padding.length < 40) {
+            padding += '#';
+        }
+        console.log(padding, padding.length);
+        return Buffer.alloc(padding.length, padding);
+    }).forEach(buffer => {
+        context.write(buffer);
+    });
+};
+
+const transferChain = (context, data) => {
+    const fileNameList = chainOperate.getFullFileList();
+    console.log('接收到了同步区块数据的请求', fileNameList);
+    const fileList = fileNameList.map(file => chainOperate.getFileContentLength(file));
+    const activeFile = chainOperate.getFileContentLength('chain.json');
+    writeInfo(context, [...fileList, activeFile]);
+    fileNameList.forEach(fileName => writeFile(context, chainOperate.getFileContentWithFileName(fileName)));
+    writeFile(context, chainOperate.getFileContentWithFileName('chain.json'));
 };
 
 module.exports = {

@@ -6,6 +6,7 @@ const client = require('./client');
 const event = require('../util/event');
 const config = require('./net-config');
 const cache = require('./cache');
+const chainConfig = require('../chain/config');
 
 class NetWork {
     constructor(server, client) {
@@ -35,8 +36,9 @@ class NetWork {
     }
 
     syncData() {
-        this.client.syncBlockChain().then(() => {
+        this.client.syncBlockChain(chainConfig.chainType).then(() => {
             console.log('区块链数据同步完成');
+        }).finally(() => {
             event.fire('setting');
         });
     }

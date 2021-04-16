@@ -1,4 +1,5 @@
 const chain = require('../chain/chain.js');
+const operate = require('../data/chainOperate');
 
 
 function init() {
@@ -16,12 +17,17 @@ function init() {
     ]
 
     const block = chain.makeBlock(mock);
-    console.log(block);
-    console.log(chain.verifyBlock(block));
-
+    console.log('生成了一个新区块，区块内容是', block);
+    console.log('区块验证结果：', chain.verifyBlock(block));
+    return block;
 };
 
-init();
+let i = 1000;
+
+while (i--) {
+    const newBlock = init();
+    operate.writeFile(newBlock);
+}
 
 
 // module.exports = init();

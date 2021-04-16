@@ -4,7 +4,7 @@ const request = (ip, port, dataString, callBack, errCallBack) => {
     const socket = net.connect(port, ip);
 
     socket.on('connect', () => {
-        socket.write(dataString);
+        socket.write(dataString || '');
     });
 
     let tempData;
@@ -29,7 +29,7 @@ const fileTransfer = option => {
     const socket = net.connect(port, ip);
 
     socket.on('connect', () => {
-        socket.write(dataString);
+        socket.write(dataString || '');
     });
 
     socket.on('error', err => {

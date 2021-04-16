@@ -2,6 +2,7 @@
 const config = require('./net-config');
 const request = require('./request');
 const chainOperate = require('../data/chainOperate');
+const {ChunkParse} = require('./parseStream');
 
 const findAndJoinNet = (myIP, myPORT) => {
     const [ip, port] = config.proxyIP.split('-');
@@ -26,25 +27,32 @@ const findAndJoinNet = (myIP, myPORT) => {
 const getNearestServer = data => {
     return request.toAll(`3|${JSON.stringify(data)}`).then(result => {
         console.log(result);
-        const validIpList = result.filter(everyReq => !!everyReq.value).map(item => item.value);
+        const validIpList = result.filter(everyReq => !!everyReq.value).map(item => {
+            const {ip, port} = JSON.parse(item.value || '{}');
+            return `${ip}-${port}`;
+        });
         return request.toAllWithRace(`3|`, validIpList);
     });
 };
 
 const syncBlockChain = (chainType = 'head') => {
     const params = {
-        name: 'chainType',
+        type: 'chainType',
         value: chainType
     };
     return getNearestServer(params).then(res => {
         const {ip, port} = JSON.parse(res);
+        const parser = new ChunkParse();
         const params = {
             ip,
             port,
-            onData: chunk => chainOperate.syncChainFile(chunk)
+            dataString: '4|',
+            onData: chunk => {
+                parser.make(chunk);
+            }
         };
         return request.download(params);
-    });
+    }).catch(e => console.error(e));
 };
 
 module.exports = {

@@ -21,6 +21,7 @@ const initNetWork = (port = 2222) => {
                 socket.on('data', res => {
                     const [type, data] = res.split('|');
                     const fnName = codeToMethod[type];
+                    console.log('ppppppppp', socket.address());
                     operate[fnName] && operate[fnName](socket, data);
                     socket.end();
                 });

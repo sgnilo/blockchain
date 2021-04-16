@@ -40,9 +40,9 @@ const writeFile = chain => {
 };
 
 const syncChainFile = chunk => {
-  const {fileName, fileContent} = JSON.parse(chunk);
-  fs.writeFileSync(path.resolve(__dirname, fileName), JSON.stringify(fileContent));
-  if (fileName !== 'chain.json') {
+  const {fileName, fileContent} = chunk;
+  fs.writeFileSync(path.resolve(__dirname, fileName), fileContent, {flag: 'as'});
+  if (fileName !== 'chain.json' && !chainConfig.fullFileList.includes(fileName)) {
     chainConfig.fullFileList.push(fileName);
     fs.writeFileSync(CONFIGFILENAME, JSON.stringify(chainConfig));
   }
@@ -54,15 +54,25 @@ const getFullFileList = () => {
 };
 
 const getFileContentWithFileName = fileName => {
+  console.log('文件名：', fileName);
   return {
     fileName,
-    fileContent: getFileContent(fileName)
+    fileContent: JSON.stringify(getFileContent(path.resolve(__dirname, fileName)))
   };
+};
+
+const getFileContentLength = fileName => {
+  const contentLength = JSON.stringify(getFileContent(path.resolve(__dirname, fileName))).length;
+  return {
+    name: fileName,
+    contentLength
+  }
 };
 
 module.exports = {
   writeFile,
   syncChainFile,
   getFullFileList,
-  getFileContentWithFileName
+  getFileContentWithFileName,
+  getFileContentLength
 };

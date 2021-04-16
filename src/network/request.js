@@ -32,6 +32,7 @@ const toAll = (data, defaultIpList) => {
         }
         return new Promise((resolve, reject) => {
             try {
+                console.log('普通广播使用的ip:', ip, net.isIP(ip));
                 if (!net.isIP(ip)) {
                     throw new Error('无效IP!');
                 }
