@@ -22,7 +22,7 @@ function init() {
     return block;
 };
 
-let i = 1000;
+let i = 10;
 
 while (i--) {
     const newBlock = init();

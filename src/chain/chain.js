@@ -32,10 +32,12 @@ const createMerkleTree = infoList => {
         let count = 0;
         const tempList = [];
         while (count < list.length) {
+            const pre = list[count].value;
+            const cur = ((list[count + 1] || {}).value || '');
             const node = {
                 left: list[count],
                 right: list[count + 1],
-                value: sha(list[count].value + ((list[count + 1] || {}).value || '')),
+                value: sha(pre > cur ? pre + cur : cur + pre),
                 level
             };
             tempList.push(list[count + 1] ? node : {...list[count], level});
