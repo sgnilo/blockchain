@@ -1,23 +1,28 @@
 const config = require('./config.js');
 const sha = require('sha1');
+const cache = require('../network/cache');
+const chainOperate = require('../data/chainOperate');
 
 /**
  * 生成区块
  * @param {object} infoList 要记录的列表
  * @param {object} preBlock 上一区块
  */
-const createBlock = (infoList, preBlock = {height: 0}) => {
+const createBlock = (infoList) => {
+    const preBlock = cache.getCache('preBlock') || chainOperate.getPreBlock() || {height: 0};
     const body = createBlockBody(infoList);
     const option = {
         preBlock: preBlock.head ? sha(JSON.stringify(preBlock.head)) : null,
         merkleRoot: body.root,
     };
     const head = createBlockHead(option);
-    return {
+    const block = {
         head,
         body,
-        height: preBlock.height++
-    }
+        height: preBlock.height + 1
+    };
+    cache.setCache('preBlock', block);
+    return block;
 };
 
 /**
@@ -100,10 +105,48 @@ const getRandomNum = (node, num) => {
  */
 const verifyBlock = block => sha(JSON.stringify(block.head)).startsWith(config.hardLevel);
 
+/**
+ * 计算某个节点的merkle验证路径
+ * @param {string} hash 该节点的hash值
+ * @param {object} tree merkle树根结点
+ * @returns {Array}
+ */
+const getVerifyPath = (hash, tree) => {
+    const path = [];
+    (node => {
+        const left = node.left && find(node.left);
+        const right = node.left && find(node.right);
+        left && node.right && path.push({
+            value: node.right.value,
+            level: node.right.level
+        });
+        right && node.left && path.push({
+            value: node.left.value,
+            level: node.right.level
+        });
+        return left || right || node.value === hash;
+    })(tree);
+    return path;
+};
 
+/**
+ * 根据某个节点的merkle路径验证是否存在于该merkle树
+ * @param {string} hash 进行验证的节点的hash
+ * @param {Array} result merkle认证路径
+ * @param {string} rootHash merkle树根hash值
+ * @returns {boolean}
+ */
+const verifyWithMerklePath = (hash, result, rootHash) => {
+    const root = result.reduce((total, item) => {
+        return sha(total > item.value ? total + item.value : item.value + total);
+    }, hash);
+    return root === rootHash;
+};
 
 
 module.exports = {
     makeBlock: createBlock,
-    verifyBlock
+    verifyBlock,
+    getVerifyPath,
+    verifyWithMerklePath
 }

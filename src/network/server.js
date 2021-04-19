@@ -72,9 +72,11 @@ const transferChain = (context, data) => {
     console.log('接收到了同步区块数据的请求', fileNameList);
     const fileList = fileNameList.map(file => chainOperate.getFileContentLength(file));
     const activeFile = chainOperate.getFileContentLength('chain.json');
-    writeInfo(context, [...fileList, activeFile]);
+    const configFile = chainOperate.getFileContentLength('file-map.json');
+    writeInfo(context, [...fileList, activeFile, configFile]);
     fileNameList.forEach(fileName => writeFile(context, chainOperate.getFileContentWithFileName(fileName)));
     writeFile(context, chainOperate.getFileContentWithFileName('chain.json'));
+    writeFile(context, chainOperate.getFileContentWithFileName('file-map.json'));
 };
 
 module.exports = {

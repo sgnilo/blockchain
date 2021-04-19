@@ -49,11 +49,12 @@ class NetWork {
     }
 }
 
-const netWork = new NetWork(listener, client);
+const runNetWork = () => new NetWork(listener, client);
 
 
 
 module.exports = {
     toPoint: request.toPoint,
-    toAll: request.toAll
+    toAll: request.toAll,
+    runNetWork
 };

@@ -7,6 +7,8 @@ const EXACTFILENAME = path.resolve(__dirname, 'chain.json');
 // 配置文件
 const CONFIGFILENAME = path.resolve(__dirname, 'chain-config.json');
 
+const FILEMAPNAME = path.resolve(__dirname, 'file-map.json');
+
 /**
  * 获取文件内容
  * @param {string} fileName 
@@ -30,11 +32,25 @@ const getSize = fileName => fs.statSync(fileName || EXACTFILENAME).size;
 const writeFile = chain => {
     if (getSize() >= chainConfig.limitSize) {
         const fullFileName = `chain-${chainConfig.fullFileList.length}.json`;
+        const fileMap = getFileContent(FILEMAPNAME);
+        if (!fileMap[fullFileName]) {
+          fileMap[fullFileName] = {};
+        }
+        fileMap[fullFileName] = fileMap['chain.json'];
+        delete fileMap['chain.json'];
+        fs.writeFileSync(FILEMAPNAME, JSON.stringify(fileMap));
         fs.renameSync(EXACTFILENAME, path.resolve(__dirname, fullFileName));
         chainConfig.fullFileList.push(fullFileName);
         fs.writeFileSync(CONFIGFILENAME, JSON.stringify(chainConfig));
         fs.writeFileSync(EXACTFILENAME, '[]');
     }
+    const fileMap = getFileContent(FILEMAPNAME);
+    if (!fileMap['chain.json']) {
+      fileMap['chain.json'] = {};
+    }
+    fileMap['chain.json'].time = chain.head.timestamp;
+    fileMap['chain.json'].height = chain.height;
+    fs.writeFileSync(FILEMAPNAME, JSON.stringify(fileMap));
     const chains = [...getFileContent(EXACTFILENAME), chain];
     fs.writeFileSync(EXACTFILENAME, JSON.stringify(chains));
 };
@@ -69,10 +85,52 @@ const getFileContentLength = fileName => {
   }
 };
 
+const getPreBlock = () => {
+  const chain = getFileContent(EXACTFILENAME);
+  return chain[chain.length - 1];
+};
+
+const getNearestFile = (value, type = 'time') => {
+  const fileMap = getFileContent(FILEMAPNAME);
+  const fileList = [];
+  for (let file in fileMap) {
+    fileList.push({
+      file,
+      time: fileMap[file].time,
+      height: fileMap[file].height
+    });
+  }
+  fileList.sort((a, b) => a.value - b.value);
+  let fileName = '';
+  fileList.forEach(item => {
+    if (value < item[type]) {
+      fileName = item.file;
+    }
+  })
+  return fileName;
+};
+
+const getExactBlock = data => {
+  const {height, time} = data;
+  const fileName = getNearestFile(time);
+  const chain = getFileContent(fileName);
+  let i = 0;
+  while (i < chain.length) {
+    if (chain[i].height === height) {
+      break;
+    }
+    i++;
+  }
+  return chain[i];
+}
+
 module.exports = {
   writeFile,
   syncChainFile,
   getFullFileList,
   getFileContentWithFileName,
-  getFileContentLength
+  getFileContentLength,
+  getPreBlock,
+  getNearestFile,
+  getExactBlock
 };
