@@ -4,17 +4,22 @@ const network = require('../network/index');
 const service = require('./service');
 const cache = require('../network/cache');
 
-cache.setCache('preBlock', operate.getPreBlock());
+
+network.consume = () => {
+    cache.setCache('preBlock', operate.getPreBlock());
+    const params = {
+        height: 583,
+        time: 1618836901353,
+        hash: '1a6146c8b2b6ef7e9eb6ad30f3c58e05f6bb4b9a'
+    };
+    service.isExisit(params).then(res => console.log(res));
+
+};
 
 network.runNetWork();
 
-const params = {
-    height: 583,
-    time: 1618836901353,
-    hash: '1a6146c8b2b6ef7e9eb6ad30f3c58e05f6bb4b9a'
-};
 
-service.isExisit(params).then(res => console.log(res));
+
 // function init() {
 
 //     const mock = [

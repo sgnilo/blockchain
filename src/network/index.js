@@ -16,6 +16,9 @@ class NetWork {
         event.on('join', data => this.joinNet(data));
         event.on('sync', data => this.syncData(data));
         event.on('setting', data => this.setTask(data));
+        event.on('finish', data => {
+            this.consume && this.consume(data);
+        });
         event.fire('init');
     }
 
@@ -46,6 +49,7 @@ class NetWork {
     setTask() {
         checkLoop.check(config.checkLoopDuration);
         console.log('巡检任务设置完成');
+        event.fire('consume');
     }
 }
 

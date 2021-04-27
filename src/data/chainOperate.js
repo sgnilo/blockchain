@@ -13,7 +13,14 @@ const FILEMAPNAME = path.resolve(__dirname, 'file-map.json');
  * 获取文件内容
  * @param {string} fileName 
  */
-const getFileContent = fileName => JSON.parse(fs.readFileSync(fileName));
+const getFileContent = fileName => {
+  try {
+    return JSON.parse(fs.readFileSync(fileName));
+  } catch (err) {
+    console.log('解析出错了', err);
+    return [];
+  }
+};
 
 const chainConfig = getFileContent(CONFIGFILENAME);
 
