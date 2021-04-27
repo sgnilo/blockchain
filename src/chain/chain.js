@@ -113,7 +113,7 @@ const verifyBlock = block => sha(JSON.stringify(block.head)).startsWith(config.h
  */
 const getVerifyPath = (hash, tree) => {
     const path = [];
-    (node => {
+    const find = node => {
         const left = node.left && find(node.left);
         const right = node.left && find(node.right);
         left && node.right && path.push({
@@ -125,7 +125,8 @@ const getVerifyPath = (hash, tree) => {
             level: node.right.level
         });
         return left || right || node.value === hash;
-    })(tree);
+    };
+    find(tree);
     return path;
 };
 
@@ -143,10 +144,21 @@ const verifyWithMerklePath = (hash, result, rootHash) => {
     return root === rootHash;
 };
 
+/**
+ * 判断某区块是否是该区块的前一区块
+ * @param {object} block 进行验证的区块
+ * @param {object} pre 进行验证的前一区块
+ * @returns {boolean}
+ */
+const isPreBlock = (block, pre) => {
+    return block.head.preBlock === sha(JSON.stringify(pre));
+};
+
 
 module.exports = {
     makeBlock: createBlock,
     verifyBlock,
     getVerifyPath,
-    verifyWithMerklePath
+    verifyWithMerklePath,
+    isPreBlock
 }

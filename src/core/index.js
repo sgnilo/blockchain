@@ -8,9 +8,13 @@ cache.setCache('preBlock', operate.getPreBlock());
 
 network.runNetWork();
 
-const params = {};
+const params = {
+    height: 583,
+    time: 1618836901353,
+    hash: '1a6146c8b2b6ef7e9eb6ad30f3c58e05f6bb4b9a'
+};
 
-service.getMerklePath(params);
+service.isExisit(params).then(res => console.log(res));
 // function init() {
 
 //     const mock = [

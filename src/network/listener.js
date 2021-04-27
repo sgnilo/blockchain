@@ -8,7 +8,9 @@ const codeToMethod = {
     1: 'syncIpList',
     2: 'stillAlive',
     3: 'getNearestIp',
-    4: 'transferChain'
+    4: 'transferChain',
+    5: 'getExactBlock',
+    6: 'receiveNewBlock'
 }
 
 const initNetWork = (port = 2222) => {

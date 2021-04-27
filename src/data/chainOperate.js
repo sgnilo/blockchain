@@ -102,18 +102,21 @@ const getNearestFile = (value, type = 'time') => {
   }
   fileList.sort((a, b) => a.value - b.value);
   let fileName = '';
-  fileList.forEach(item => {
-    if (value < item[type]) {
-      fileName = item.file;
+  for (let i = 0; i < fileList.length; i++) {
+    if (value < fileList[i][type]) {
+      fileName = fileList[i].file;
+      break;
     }
-  })
+  }
   return fileName;
 };
 
 const getExactBlock = data => {
   const {height, time} = data;
+  console.log(height, time);
   const fileName = getNearestFile(time);
-  const chain = getFileContent(fileName);
+  console.log(fileName);
+  const chain = getFileContent(path.resolve(__dirname, fileName));
   let i = 0;
   while (i < chain.length) {
     if (chain[i].height === height) {

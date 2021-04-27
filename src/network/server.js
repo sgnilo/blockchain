@@ -2,6 +2,7 @@
 const request = require('./request');
 const chainOperate = require('../data/chainOperate');
 const demand = require('./demand');
+const chain = require('../chain/chain');
 const net = require('net');
 
 const joinBlockChainNetwork = (context, data) => {
@@ -48,10 +49,6 @@ const writeFile = (context, data, size = 1000) => {
     contentBufferList.forEach(buffer => {
         context.write(buffer);
     });
-    // const nameBuffer = Buffer.alloc(fileName.length, fileName);
-    // console.log(contentBufferList);
-    // console.log(nameBuffer);
-    // context.write(nameBuffer);
 };
 
 const writeInfo = (context, fileList) => {
@@ -79,10 +76,25 @@ const transferChain = (context, data) => {
     writeFile(context, chainOperate.getFileContentWithFileName('file-map.json'));
 };
 
+const getExactBlock = (context, data) => {
+    const block = chainOperate.getExactBlock(JSON.parse(data));
+    context.write(JSON.stringify(block));
+};
+
+const receiveNewBlock = (context, data) => {
+    const block = JSON.parse(data);
+    if (chain.verifyBlock(block) && chain.isPreBlock(block, chainOperate.getPreBlock())) {
+        context.write(1);
+        chainOperate.writeFile(block);
+    }
+};
+
 module.exports = {
     joinBlockChainNetwork,
     syncIpList,
     stillAlive,
     getNearestIp,
-    transferChain
+    transferChain,
+    getExactBlock,
+    receiveNewBlock
 }

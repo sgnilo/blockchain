@@ -55,8 +55,23 @@ const syncBlockChain = (chainType = 'head') => {
     }).catch(e => console.error(e));
 };
 
+const getExactBlock = params => {
+    return getNearestServer({type: 'chainType', value: 'all'}).then(res => {
+        const {ip, port} = JSON.parse(res);
+        return request.toPoint(ip, port, `5|${JSON.stringify(params)}`).then(data => {
+            return JSON.parse(data);
+        });
+    });
+}
+
+const throwBlockToNetwork = block => {
+    return request.toAll(`6|${JSON.stringify(block)}`);
+};
+
 module.exports = {
     findAndJoinNet,
     syncBlockChain,
-    getNearestServer
+    getNearestServer,
+    getExactBlock,
+    throwBlockToNetwork
 };
