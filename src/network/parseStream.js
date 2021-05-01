@@ -38,7 +38,7 @@ class ChunkParse {
         console.log(tempStr);
         this.current += tempStr.length;
         this.tempStr = tempStr.length === 40 ? '' : tempStr;
-        if (!this.tempStr) {
+        if (!this.tempStr && tempStr) {
             const [name, length, hasNext] = tempStr.replace(/#/g, '').split('|');
             this.fileList.push({name, length: parseInt(length), hasNext: parseInt(hasNext)});
             if (!parseInt(hasNext)) {

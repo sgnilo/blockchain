@@ -1,11 +1,12 @@
 const chain = require('../chain/chain.js');
 const operate = require('../data/chainOperate');
-const network = require('../network/index');
+const {network} = require('../network/index');
 const service = require('./service');
 const cache = require('../network/cache');
 
 
 network.consume = () => {
+    console.log('运行正常，进入平稳运行阶段');
     cache.setCache('preBlock', operate.getPreBlock());
     const params = {
         height: 583,
