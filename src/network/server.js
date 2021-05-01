@@ -4,6 +4,7 @@ const chainOperate = require('../data/chainOperate');
 const demand = require('./demand');
 const chain = require('../chain/chain');
 const net = require('net');
+const cache = require('./cache');
 
 const joinBlockChainNetwork = (context, data) => {
     const [ip, port] = data.split('-');
@@ -89,6 +90,11 @@ const receiveNewBlock = (context, data) => {
     }
 };
 
+const newestBlock = (context, data) => {
+    const block = cache.getCache('preBlock') || chainOperate.getPreBlock();
+    context.write(JSON.stringify(block));
+};
+
 module.exports = {
     joinBlockChainNetwork,
     syncIpList,
@@ -96,5 +102,6 @@ module.exports = {
     getNearestIp,
     transferChain,
     getExactBlock,
-    receiveNewBlock
+    receiveNewBlock,
+    newestBlock
 }

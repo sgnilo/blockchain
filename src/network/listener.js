@@ -10,7 +10,8 @@ const codeToMethod = {
     3: 'getNearestIp',
     4: 'transferChain',
     5: 'getExactBlock',
-    6: 'receiveNewBlock'
+    6: 'receiveNewBlock',
+    7: 'newestBlock'
 }
 
 const initNetWork = (port = 2222) => {

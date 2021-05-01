@@ -3,6 +3,9 @@ const config = require('../chain/config');
 const dict = {
     chainType(value) {
         return value === config.chainType;
+    },
+    online(value) {
+        return value
     }
 }
 

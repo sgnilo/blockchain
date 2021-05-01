@@ -7,6 +7,7 @@ const event = require('../util/event');
 const config = require('./net-config');
 const cache = require('./cache');
 const chainConfig = require('../chain/config');
+const chainOperate = require('../data/chainOperate');
 
 class NetWork {
     constructor(server, client) {
@@ -40,8 +41,12 @@ class NetWork {
     }
 
     syncData() {
-        this.client.syncBlockChain(chainConfig.chainType).then(() => {
-            console.log('区块链数据同步完成');
+        this.client.getNewestBlock().then(res => {
+            if (JSON.stringify(res) !== JSON.stringify(chainOperate.getPreBlock())) {
+                return this.client.syncBlockChain(chainConfig.chainType).then(() => {
+                    console.log('区块链数据同步完成');
+                });
+            }
         }).finally(() => {
             event.fire('setting');
         });

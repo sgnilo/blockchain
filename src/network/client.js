@@ -68,10 +68,20 @@ const throwBlockToNetwork = block => {
     return request.toAll(`6|${JSON.stringify(block)}`);
 };
 
+const getNewestBlock = () => {
+    return getNearestServer({type: 'online', value: true}).then(res => {
+        const {ip, port} = JSON.parse(res);
+        return request.toPoint(ip, port, `7|`).then(data => {
+            return JSON.parse(data);
+        });
+    });
+}
+
 module.exports = {
     findAndJoinNet,
     syncBlockChain,
     getNearestServer,
     getExactBlock,
-    throwBlockToNetwork
+    throwBlockToNetwork,
+    getNewestBlock
 };
