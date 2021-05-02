@@ -85,7 +85,7 @@ const getExactBlock = (context, data) => {
 const receiveNewBlock = (context, data) => {
     const block = JSON.parse(data);
     if (chain.verifyBlock(block) && chain.isPreBlock(block, chainOperate.getPreBlock())) {
-        context.write(1);
+        context.write('ok');
         chainOperate.writeFile(block);
     }
 };

@@ -151,7 +151,7 @@ const verifyWithMerklePath = (hash, result, rootHash) => {
  * @returns {boolean}
  */
 const isPreBlock = (block, pre) => {
-    return block.head.preBlock === sha(JSON.stringify(pre));
+    return block.head.preBlock === sha(JSON.stringify(pre.head));
 };
 
 
