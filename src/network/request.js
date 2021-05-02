@@ -23,13 +23,10 @@ const toPoint = (ip, port, data) => {
 };
 
 const toAll = (data, defaultIpList) => {
-    const ipList = defaultIpList || getIpList();
+    const myAddress = cache.getCache('thisAddress');
+    const ipList = (defaultIpList || getIpList()).filter(item => item !== `${myAddress.ip}-${myAddress.port}`);
     return Promise.allSettled(ipList.map(item => {
         const [ip, port] = item.split('-');
-        const myAddress = cache.getCache('thisAddress');
-        if (item === `${myAddress.ip}-${myAddress.port}`) {
-            return Promise.reject();
-        }
         return new Promise((resolve, reject) => {
             try {
                 console.log('普通广播使用的ip:', ip, net.isIP(ip));
@@ -49,7 +46,8 @@ const toAll = (data, defaultIpList) => {
 };
 
 const toAllWithRace = (data, defaultIpList) => {
-    const ipList = defaultIpList || getIpList();
+    const myAddress = cache.getCache('thisAddress');
+    const ipList = (defaultIpList || getIpList()).filter(item => item !== `${myAddress.ip}-${myAddress.port}`);
     return Promise.race(ipList.map(item => {
         const [ip, port] = item.split('-');
         return new Promise((resolve, reject) => {
