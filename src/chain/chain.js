@@ -60,7 +60,7 @@ const createMerkleTree = infoList => {
     while (hashArr.length > 1) {
         hashArr = iterator(hashArr);
     }
-    return hashArr;
+    return hashArr[0];
 }
 
 const createBlockBody = infoList => {
@@ -81,7 +81,7 @@ const createBlockHead = (option) => {
         version: config.version || 1,
         preBlock: option.preBlock,
         timestamp: new Date().getTime(),
-        merkleHash: sha(option.merkleRoot)
+        merkleHash: sha(JSON.stringify(option.merkleRoot))
     };
     head.randNum = getRandomNum(head, 0);
     return head;
