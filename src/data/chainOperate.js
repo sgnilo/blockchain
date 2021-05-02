@@ -119,6 +119,7 @@ const getNearestFile = (value, type = 'time') => {
 };
 
 const getExactBlock = data => {
+  console.log(data);
   const {height, time} = data;
   console.log(height, time);
   const fileName = getNearestFile(time);
