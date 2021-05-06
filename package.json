@@ -1,6 +1,6 @@
 {
-  "name": "blockchain",
-  "version": "1.0.0",
+  "name": "blockchain-xjp",
+  "version": "1.0.1",
   "description": "数字版权验证系统的区块链模块",
   "main": "src/index.js",
   "scripts": {
@@ -25,5 +25,6 @@
     "sha1": "^1.1.1",
     "webpack": "^5.23.0",
     "webpack-cli": "^4.5.0"
-  }
+  },
+  "files": ["src"]
 }

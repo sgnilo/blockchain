@@ -41,13 +41,16 @@ class NetWork {
     }
 
     syncData() {
+        console.log('????')
         this.client.getNewestBlock().then(res => {
+            console.log('!!!!');
             if (JSON.stringify(res) !== JSON.stringify(chainOperate.getPreBlock())) {
                 return this.client.syncBlockChain(chainConfig.chainType).then(() => {
                     console.log('区块链数据同步完成');
                 });
             }
-        }).finally(() => {
+        }).catch(err => console.log('出错了', err)).finally(() => {
+            console.log('fillllll')
             event.fire('setting');
         });
     }
