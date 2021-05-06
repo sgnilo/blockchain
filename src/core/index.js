@@ -1,7 +1,7 @@
 const chain = require('../chain/chain.js');
 const operate = require('../data/chainOperate');
 const {network} = require('../network/index');
-const service = require('./service');
+const {addBlock, isExisit} = require('./service');
 const cache = require('../network/cache');
 
 
@@ -9,13 +9,7 @@ network.consume = () => {
     console.log('运行正常，进入平稳运行阶段');
     cache.setCache('preBlock', operate.getPreBlock());
     console.log(cache.getCache('preBlock'));
-    const params = {
-        height: 583,
-        time: 1618836901353,
-        hash: '1a6146c8b2b6ef7e9eb6ad30f3c58e05f6bb4b9a'
-    };
-    service.isExisit(params).then(res => console.log(res));
-    service.addBlock([{name: 'hi'}, {name: 'iam test'}]).then(res => {
+    addBlock([{name: 'hi'}, {name: 'iam test'}]).then(res => {
         console.log('是否添加成功:', res);
         console.log(cache.getCache('preBlock'));
     });
@@ -78,4 +72,7 @@ network.runNetWork();
 // }
 
 
-// module.exports = init();
+module.exports = {
+    addBlock,
+    isExisit
+}
