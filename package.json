@@ -6,7 +6,8 @@
   "scripts": {
     "test": "npm run test",
     "start": "node src/index.js",
-    "net": "node src/network/index.js"
+    "net": "node src/network/index.js",
+    "build": "webpack -c ./webpack.config.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,7 @@
   },
   "homepage": "https://github.com/sgnilo/blockchain#readme",
   "dependencies": {
+    "clean-webpack-plugin": "^4.0.0-alpha.0",
     "sha1": "^1.1.1",
     "webpack": "^5.23.0",
     "webpack-cli": "^4.5.0"

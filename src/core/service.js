@@ -19,23 +19,22 @@ const isExisit = param => {
 
 const addBlock = infoList => {
     const block = chain.makeBlock(infoList);
-    console.log('ppppppp', block.body.root)
     if (chain.verifyBlock(block) && chain.isPreBlock(block, chainOperate.getPreBlock())) {
-        console.log('is here')
         return requestClient.throwBlockToNetwork(block).then(result => {
-            console.log(result)
             let i = 0;
             result.forEach(item => item.value && i++);
             if (i > 6 || i === result.length) {
                 chainOperate.writeFile(block);
-                return true;
+                return {
+                    status: true,
+                    block
+                };
             } else {
-                return false;
+                return {status: false};
             }
         });
     } else {
-        console.log('what the fuck', chain.isPreBlock(block, chainOperate.getPreBlock()))
-        return Promise.resolve(false);
+        return Promise.resolve({status: false});
     }
 };
 

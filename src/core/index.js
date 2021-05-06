@@ -18,7 +18,6 @@ network.consume = () => {
     service.addBlock([{name: 'hi'}, {name: 'iam test'}]).then(res => {
         console.log('是否添加成功:', res);
         console.log(cache.getCache('preBlock'));
-        console.log(operate.getExactBlock());
     });
 };
 
