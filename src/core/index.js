@@ -23,27 +23,52 @@ network.consume = () => {
 
 network.runNetWork();
 
-
-
 // function init() {
 
 //     const mock = [
-//         {id: 1},
-//         {id: 2},
-//         {id: 3},
-//         {id: 4},
-//         {id: 5},
-//         {id: 6},
-//         {id: 7},
-//         {id: 8},
-//         {id: 9},
-//     ]
-
+//         {
+//           userId: 8,
+//           userName: '000',
+//           productName: 'jjj',
+//           productDesc: 'kk',
+//           productMd5: 'acb58fae46e6b0c9b9d83c8afd4c996d'
+//         },
+//         {
+//           userId: 8,
+//           userName: '000',
+//           productName: 'ooo',
+//           productDesc: 'lll',
+//           productMd5: '7020bddfd0d896cc85e5cf070e864596'
+//         },
+//         {
+//           userId: 8,
+//           userName: '000',
+//           productName: '第七次测试',
+//           productDesc: 'no content',
+//           productMd5: '9f75415c06a9f84b14cd31c754ff6f34'
+//         },
+//         {
+//           userId: 8,
+//           userName: '000',
+//           productName: '更多更多',
+//           productDesc: '坎坎坷坷',
+//           productMd5: '2b67ec712dc147862078c1d05eec6771'
+//         },
+//         {
+//           userId: 8,
+//           userName: '000',
+//           productName: '测试大一点的文件',
+//           productDesc: 'no content',
+//           productMd5: '75ca19a829012d0fd66232fdf1f31a25'
+//         }
+//       ]
 //     const block = chain.makeBlock(mock);
 //     console.log('生成了一个新区块，区块内容是', block);
 //     console.log('区块验证结果：', chain.verifyBlock(block));
 //     return block;
 // };
+
+// operate.writeFile(init());
 
 // let i = 1000;
 
